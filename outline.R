@@ -74,9 +74,7 @@ D13_MIS <- list(D13_MIS07, D13_MIS08, D13_MIS17,
           as.data.frame()
 
 #write a helper function that will be primary use for app
-
-dat <- D06_MIS
-startplot <- function(dat){
+startplot <- function(dat,heatmap=F){
   #use PC
   rownames(dat) <- dat$ID
   distmatrix<-dist(dat[,-1])
@@ -84,10 +82,10 @@ startplot <- function(dat){
   dathclust<-hclust(distmatrix)
   dathclust$labels <- dat$ID
   
-  #plots typical dendrogram
-  plot(dathclust)
-  #or plots heat map that shows similarity
-  heatmap(as.matrix(distmatrix))
+  #plots typical dendrogram or heatmap
+  p <- ifelse(heatmap==F, yes = plot(dathclust), 
+              no = heatmap(as.matrix(distmatrix)))
+  return(p)
 }
 
-startplot(D04_LSR)
+startplot(D04_LSR, heatmap = TRUE)
