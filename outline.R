@@ -21,7 +21,7 @@ for (i in 1:length(listWgenes)){
     select(ID, everything())
   assign(name, x)
 }
-
+#C:/Users/Beatrice Weier/Documents
 #making new lists with df to then merge
 #note only those with 3+ df are used
 D04_LSN <- list(D04_LSN01, D04_LSN02, D04_LSN03,
@@ -29,7 +29,9 @@ D04_LSN <- list(D04_LSN01, D04_LSN02, D04_LSN03,
             reduce(full_join, by='ID') %>%
             replace(is.na(.), 0) %>%
             as.data.frame()
-  
+write_csv(D04_LSN,
+          file = "C:/Users/Beatrice Weier/Documents/D04_LSN.csv")
+
 
 D04_LSR <- list(D04_LSR01, D04_LSR02, D04_LSR03,
                 D04_LSR04, D04_LSR05, D04_LSR06,
@@ -37,18 +39,24 @@ D04_LSR <- list(D04_LSR01, D04_LSR02, D04_LSR03,
             reduce(full_join, by='ID') %>%
             replace(is.na(.), 0) %>%
             as.data.frame()
+write_csv(D04_LSR,
+          file = "C:/Users/Beatrice Weier/Documents/D04_LSR.csv")
 
 D04_RBT <- list(D04_RBT02, D04_RBT06, D04_RBT12,
                 D04_RBT20)%>% 
           reduce(full_join, by='ID') %>%
           replace(is.na(.), 0) %>%
           as.data.frame()
+write_csv(D04_RBT,
+          file = "C:/Users/Beatrice Weier/Documents/D04_RBT.csv")
 
 D06_BCC <- list(D06_BCC01, D06_BCC03, D06_BCC04,
                 D06_BCC05, D06_BCC09)%>% 
           reduce(full_join, by='ID') %>%
           replace(is.na(.), 0) %>%
           as.data.frame()
+write_csv(D06_BCC,
+          file = "C:/Users/Beatrice Weier/Documents/D06_BCC.csv")
 
 D06_MIS <- list(D06_MIS03, D06_MIS04, D06_MIS06,
                 D06_MIS07, D06_MIS08, D06_MIS10,
@@ -56,22 +64,40 @@ D06_MIS <- list(D06_MIS03, D06_MIS04, D06_MIS06,
           reduce(full_join, by='ID') %>%
           replace(is.na(.), 0) %>% 
           as.data.frame()
+write_csv(D06_MIS,
+          file = "C:/Users/Beatrice Weier/Documents/D06_MIS.csv")
 
 D07_LAC <- list(D07_LAC03, D07_LAC04, D07_LAC05)%>% 
           reduce(full_join, by='ID') %>%
           replace(is.na(.), 0) %>%
           as.data.frame()
+write_csv(D07_LAC,
+          file = "C:/Users/Beatrice Weier/Documents/D07_LAC.csv")
 
 D12_RBK <- list(D12_RBK01, D12_RBK02, D12_RBK03)%>% 
           reduce(full_join, by='ID') %>%
           replace(is.na(.), 0) %>%
           as.data.frame()
+write_csv(D12_RBK,
+          file = "C:/Users/Beatrice Weier/Documents/D12_RBK.csv")
  
 D13_MIS <- list(D13_MIS07, D13_MIS08, D13_MIS17,
                 D13_MIS19, D13_MIS20, D13_MIS21)%>% 
           reduce(full_join, by='ID') %>%
           replace(is.na(.), 0) %>%
           as.data.frame()
+write_csv(D13_MIS,
+          file = "C:/Users/Beatrice Weier/Documents/D13_MIS.csv")
+
+
+
+
+
+
+
+
+
+
 
 #write a helper function that will be primary use for app
 startplot <- function(dat,heatmap=F){
