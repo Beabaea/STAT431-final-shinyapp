@@ -20,7 +20,8 @@ possibledat<-c("D04_LSN","D04_LSR", "D04_RBT",
 startplot <- function(dat, hmap = FALSE){
   #use PC
   rownames(dat) <- dat$ID
-  distmatrix<-dist(dat[,-1])
+  distmatrix<-dist(dat %>% 
+                     select(-c(ID,tot)))
   
   dathclust<-hclust(distmatrix)
   

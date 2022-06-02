@@ -28,6 +28,7 @@ D04_LSN <- list(D04_LSN01, D04_LSN02, D04_LSN03,
               D04_LSN04, D04_LSN05) %>% 
             reduce(full_join, by='ID') %>%
             replace(is.na(.), 0) %>%
+            mutate(tot=rowSums( .[,-1],na.rm=TRUE)) %>%
             as.data.frame()
 write_csv(D04_LSN,
           file = "C:/Users/Beatrice Weier/Documents/D04_LSN.csv")
@@ -38,6 +39,7 @@ D04_LSR <- list(D04_LSR01, D04_LSR02, D04_LSR03,
                 D04_LSR09)%>% 
             reduce(full_join, by='ID') %>%
             replace(is.na(.), 0) %>%
+            mutate(tot=rowSums( .[,-1],na.rm=TRUE)) %>%
             as.data.frame()
 write_csv(D04_LSR,
           file = "C:/Users/Beatrice Weier/Documents/D04_LSR.csv")
@@ -45,7 +47,8 @@ write_csv(D04_LSR,
 D04_RBT <- list(D04_RBT02, D04_RBT06, D04_RBT12,
                 D04_RBT20)%>% 
           reduce(full_join, by='ID') %>%
-          replace(is.na(.), 0) %>%
+          replace(is.na(.), 0)%>%
+          mutate(tot=rowSums( .[,-1],na.rm=TRUE)) %>%
           as.data.frame()
 write_csv(D04_RBT,
           file = "C:/Users/Beatrice Weier/Documents/D04_RBT.csv")
@@ -54,6 +57,7 @@ D06_BCC <- list(D06_BCC01, D06_BCC03, D06_BCC04,
                 D06_BCC05, D06_BCC09)%>% 
           reduce(full_join, by='ID') %>%
           replace(is.na(.), 0) %>%
+          mutate(tot=rowSums( .[,-1],na.rm=TRUE)) %>%
           as.data.frame()
 write_csv(D06_BCC,
           file = "C:/Users/Beatrice Weier/Documents/D06_BCC.csv")
@@ -63,6 +67,7 @@ D06_MIS <- list(D06_MIS03, D06_MIS04, D06_MIS06,
                 D06_MIS11, D06_MIS12)%>% 
           reduce(full_join, by='ID') %>%
           replace(is.na(.), 0) %>% 
+          mutate(tot=rowSums( .[,-1],na.rm=TRUE))%>%
           as.data.frame()
 write_csv(D06_MIS,
           file = "C:/Users/Beatrice Weier/Documents/D06_MIS.csv")
@@ -70,6 +75,7 @@ write_csv(D06_MIS,
 D07_LAC <- list(D07_LAC03, D07_LAC04, D07_LAC05)%>% 
           reduce(full_join, by='ID') %>%
           replace(is.na(.), 0) %>%
+          mutate(tot=rowSums( .[,-1],na.rm=TRUE)) %>%
           as.data.frame()
 write_csv(D07_LAC,
           file = "C:/Users/Beatrice Weier/Documents/D07_LAC.csv")
@@ -77,6 +83,7 @@ write_csv(D07_LAC,
 D12_RBK <- list(D12_RBK01, D12_RBK02, D12_RBK03)%>% 
           reduce(full_join, by='ID') %>%
           replace(is.na(.), 0) %>%
+          mutate(tot=rowSums( .[,-1],na.rm=TRUE)) %>%
           as.data.frame()
 write_csv(D12_RBK,
           file = "C:/Users/Beatrice Weier/Documents/D12_RBK.csv")
@@ -85,33 +92,7 @@ D13_MIS <- list(D13_MIS07, D13_MIS08, D13_MIS17,
                 D13_MIS19, D13_MIS20, D13_MIS21)%>% 
           reduce(full_join, by='ID') %>%
           replace(is.na(.), 0) %>%
+          mutate(tot=rowSums( .[,-1],na.rm=TRUE)) %>%
           as.data.frame()
 write_csv(D13_MIS,
           file = "C:/Users/Beatrice Weier/Documents/D13_MIS.csv")
-
-
-
-
-
-
-
-
-
-
-
-#write a helper function that will be primary use for app
-startplot <- function(dat,heatmap=F){
-  #use PC
-  rownames(dat) <- dat$ID
-  distmatrix<-dist(dat[,-1])
-  
-  dathclust<-hclust(distmatrix)
-  dathclust$labels <- dat$ID
-  
-  #plots typical dendrogram or heatmap
-  p <- ifelse(heatmap==F, yes = plot(dathclust), 
-              no = heatmap(as.matrix(distmatrix)))
-  return(p)
-}
-
-startplot(D04_LSR, heatmap = TRUE)
