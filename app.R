@@ -1,6 +1,9 @@
 #here is the code for the app
 
 library(shiny)
+library(dplyr)
+library(ape)
+library(ggtree)
 
 #read in dataframes
 D04_LSN <- read.csv("C:/Users/Beatrice Weier/Documents/D04_LSN.csv")
@@ -12,12 +15,13 @@ D07_LAC <- read.csv("C:/Users/Beatrice Weier/Documents/D07_LAC.csv")
 D12_RBK <- read.csv("C:/Users/Beatrice Weier/Documents/D12_RBK.csv")
 D13_MIS <- read.csv("C:/Users/Beatrice Weier/Documents/D13_MIS.csv")
 
-possibledat<-c("D04_LSN","D04_LSR", "D04_RBT",
+possibledat<- c("D04_LSN","D04_LSR", "D04_RBT",
                "D06_BCC","D06_MIS","D07_LAC",
                "D12_RBK","D13_MIS")
+playouts <- c("rectangular", "circular", "daylight")
 
 #### Writing the Helper Function ####
-startplot <- function(dat, hmap = FALSE){
+startplot <- function(dat, hmap = FALSE, phylolayout = 'rectangular'){
   #use PC
   rownames(dat) <- dat$ID
   distmatrix<-dist(dat %>% 
@@ -33,7 +37,11 @@ startplot <- function(dat, hmap = FALSE){
     heatmap(as.matrix(distmatrix))
     
   } else {
-    plot(dathclust)
+    #plot(dathclust)
+    phylodat<-as.phylo(dathclust)
+    ggtree(phylodat, layout = phylolayout, branch.length = 'none') +
+      geom_tiplab()
+      
   }
   #return(p)
 }
@@ -46,6 +54,10 @@ ui <- fluidPage(
   selectInput('ptype', 'Plot Type',
               c("Phylogeny","Heatmap"),
               selected = "Phylogeny"),
+  uiOutput('phylayout'),
+  #selectInput('phylayout', "Phylogeny Layout",
+   #           playouts,
+   #           selected = "rectangular"),
   plotOutput('plot1')
   
 )
@@ -54,9 +66,17 @@ server <- function(input, output) {
   dat <- reactive({
     get(input$site)})
   
+  output$phylayout <- renderUI({
+    if(input$ptype != 'Heatmap'){
+      selectInput('phylayout', "Phylogeny Layout",
+                  playouts,
+                  selected = "rectangular")
+    }
+  })
+  
   output$plot1 <- renderPlot({
     if(input$ptype != "Heatmap"){
-      startplot(dat(), hmap = FALSE)
+      startplot(dat(), hmap = FALSE, phylolayout = input$phylayout)
     }else{
       startplot(dat(), hmap = TRUE)
     }
