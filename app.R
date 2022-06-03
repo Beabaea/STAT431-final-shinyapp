@@ -1,19 +1,21 @@
 #here is the code for the app
 
+#setRepositories(addURLs = c(BioC = "https://bioconductor.org/packages/3.14/bioc"))
 library(shiny)
 library(dplyr)
 library(ape)
+library(BiocManager)
 library(ggtree)
 
 #read in dataframes
-D04_LSN <- read.csv("C:/Users/Beatrice Weier/Documents/D04_LSN.csv")
-D04_LSR <- read.csv("C:/Users/Beatrice Weier/Documents/D04_LSR.csv")
-D04_RBT <- read.csv("C:/Users/Beatrice Weier/Documents/D04_RBT.csv")
-D06_BCC <- read.csv("C:/Users/Beatrice Weier/Documents/D06_BCC.csv")
-D06_MIS <- read.csv("C:/Users/Beatrice Weier/Documents/D06_MIS.csv")
-D07_LAC <- read.csv("C:/Users/Beatrice Weier/Documents/D07_LAC.csv")
-D12_RBK <- read.csv("C:/Users/Beatrice Weier/Documents/D12_RBK.csv")
-D13_MIS <- read.csv("C:/Users/Beatrice Weier/Documents/D13_MIS.csv")
+D04_LSN <- read.csv(here::here("D04_LSN.csv"))
+D04_LSR <- read.csv(here::here("D04_LSR.csv"))
+D04_RBT <- read.csv(here::here("D04_RBT.csv"))
+D06_BCC <- read.csv(here::here("D06_BCC.csv"))
+D06_MIS <- read.csv(here::here("D06_MIS.csv"))
+D07_LAC <- read.csv(here::here("D07_LAC.csv"))
+D12_RBK <- read.csv(here::here("D12_RBK.csv"))
+D13_MIS <- read.csv(here::here("D13_MIS.csv"))
 
 possibledat<- c("D04_LSN","D04_LSR", "D04_RBT",
                "D06_BCC","D06_MIS","D07_LAC",
@@ -55,9 +57,6 @@ ui <- fluidPage(
               c("Phylogeny","Heatmap"),
               selected = "Phylogeny"),
   uiOutput('phylayout'),
-  #selectInput('phylayout', "Phylogeny Layout",
-   #           playouts,
-   #           selected = "rectangular"),
   plotOutput('plot1')
   
 )
