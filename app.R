@@ -1,6 +1,6 @@
 #here is the code for the app
 
-#setRepositories(addURLs = c(BioC = "https://bioconductor.org/packages/3.14/bioc"))
+#setRepositories(addURLs = c(BioC = "https://bioconductor.org/packages/3.15/bioc"))
 library(shiny)
 library(dplyr)
 library(ape)
@@ -20,7 +20,7 @@ D13_MIS <- read.csv(here::here("D13_MIS.csv"))
 possibledat<- c("D04_LSN","D04_LSR", "D04_RBT",
                "D06_BCC","D06_MIS","D07_LAC",
                "D12_RBK","D13_MIS")
-playouts <- c("rectangular", "circular", "daylight")
+playouts <- c("rectangular", "circular", "unrooted")
 
 #### Writing the Helper Function ####
 startplot <- function(dat, hmap = FALSE, phylolayout = 'rectangular'){
@@ -30,10 +30,6 @@ startplot <- function(dat, hmap = FALSE, phylolayout = 'rectangular'){
                      select(-c(ID,tot)))
   
   dathclust<-hclust(distmatrix)
-  
-  #plots typical dendrogram or heatmap
-  # ifelse(hmap == FALSE, plot(dathclust), 
-  #              heatmap(as.matrix(distmatrix)))
   
   if (hmap) {
     heatmap(as.matrix(distmatrix))
@@ -74,8 +70,13 @@ server <- function(input, output) {
   })
   
   output$plot1 <- renderPlot({
+    if (input$phylayout == "unrooted"){
+      phylotype <- 'daylight'
+    }else{
+      phylotype <- input$phylayout
+    }
     if(input$ptype != "Heatmap"){
-      startplot(dat(), hmap = FALSE, phylolayout = input$phylayout)
+      startplot(dat(), hmap = FALSE, phylolayout = phylotype)
     }else{
       startplot(dat(), hmap = TRUE)
     }
