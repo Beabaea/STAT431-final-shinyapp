@@ -49,7 +49,7 @@ startplot <- function(dat, hmap = FALSE, phylolayout = 'rectangular'){
 ui <- fluidPage(
   headerPanel("Heat Map and Dendrogram of Mutations Among Similar Regions"),
   selectInput('site', 'Sample', possibledat),
-  selectInput('ptype', 'Plot Type',
+  radioButtons('ptype', 'Plot Type',
               c("Phylogeny","Heatmap"),
               selected = "Phylogeny"),
   uiOutput('phylayout'),
