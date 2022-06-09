@@ -6,6 +6,7 @@ library(dplyr)
 library(ape)
 library(BiocManager)
 library(ggtree)
+library(ggplot2)
 
 #read in dataframes
 D04_LSN <- read.csv(here::here("D04_LSN.csv"))
@@ -16,17 +17,6 @@ D06_MIS <- read.csv(here::here("D06_MIS.csv"))
 D07_LAC <- read.csv(here::here("D07_LAC.csv"))
 D12_RBK <- read.csv(here::here("D12_RBK.csv"))
 D13_MIS <- read.csv(here::here("D13_MIS.csv"))
-
-
-
-#will move into sever, lets have it be reactive to 
-Mutations <- NULL
-for (i in 1:nrow(dat)){ #can't figure this out without a loop but luckily df are small :,)
-  subdat<-dat[i,]%>%select(-c(ID,tot))
-  muts<-vecmutations(subdat)
-  Mutations <- c(Mutations, muts)
-}
-table <- data.frame('ID' = dat$ID, 'Total number of mutations' = dat$tot, 'Mutations' = Mutations)
 
 
 possibledat<- c("D04_LSN","D04_LSR", "D04_RBT",
@@ -50,10 +40,9 @@ startplot <- function(dat, hmap = FALSE, phylolayout = 'rectangular'){
     #plot(dathclust)
     phylodat<-as.phylo(dathclust)
     ggtree(phylodat, layout = phylolayout, branch.length = 'none') +
-      geom_tiplab() #+ 
-      #ggplot2::xlim(0, 100)
-      
-      
+      geom_tiplab() +
+      scale_x_continuous(expand = c(.25, .25))+
+      scale_y_continuous(expand = c(.25, .25))
   }
 }
 
@@ -78,7 +67,7 @@ ui <- fluidPage(
     
     mainPanel(
       tabsetPanel(
-        tabPanel("Plot", plotOutput('plot1')),
+        tabPanel("Plot", plotOutput('plot1', width = "90%")),
         tabPanel("Data Table",tableOutput('infotab')),
         tabPanel("General Information",
                  HTML("This project is by Beatrice Weier. <br> 
@@ -102,6 +91,7 @@ server <- function(input, output) {
   dat <- reactive({
     get(input$site)})
   
+  #render new buttons
   output$phylayout <- renderUI({
     if(input$ptype != 'Heatmap'){
       radioButtons('phylayout', "Phylogeny Layout",
@@ -110,6 +100,7 @@ server <- function(input, output) {
     }
   })
   
+  #for plot
   output$plot1 <- renderPlot({
     if (input$phylayout == "unrooted"){
       phylotype <- 'daylight'
@@ -123,6 +114,7 @@ server <- function(input, output) {
     }
   })
   
+  #this is for data table tab
   output$infotab <- renderTable({
     Mutations <- NULL
     
@@ -133,18 +125,7 @@ server <- function(input, output) {
     }
     
     data.frame('ID' = dat()$ID, 'Number_of_Mutations' = dat()$tot, 'Genes' = Mutations)
-    
   })
-  
-  #output$txt <- renderText(
-   # "This project is by Beatrice Weier. These plots take data from https://www.nature.com/articles/s41586-020-2785-8 ;
-    #an article with data regarding mutations in melanocytes from different subject. 
-    #The R code takes this data and creates a purely objective scaling of mutations 
-    #with equal distances for all mutations. A big disclaimer is that the distance 
-    #are calculated from the gene name, not the specific mutation within the gene.
-    #I hope to eventually better this app and make phylogenies accountign for biological
-    #variance and probabilites of certain mutations"
-  #)
 }
 
 shinyApp(ui = ui, server = server)
