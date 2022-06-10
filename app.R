@@ -1,6 +1,6 @@
 #here is the code for the app
-
-#setRepositories(addURLs = c(BioC = "https://bioconductor.org/packages/3.15/bioc"))
+#install_version("nloptr", version = "2.0.1", repos = "http://cran.us.r-project.org")
+#setRepositories(addURLs = c(BioC = "https://bioconductor.org/packages/3.14/bioc"))
 library(shiny)
 library(dplyr)
 library(ape)
