@@ -51,6 +51,29 @@ vecmutations <- function(dat){
   toString(colnames((dat[,colSums(dat) > 0])))
 }
 
+#function for bootstrapping
+bootci <- function(data,uno,dos){
+  subdat<-data %>% 
+    filter(ID %in% c(uno,dos)) %>%
+    select(-c(ID,tot))
+  
+  num<-100 #number of bootstraps
+  boot<-sjstats::bootstrap(subdat,n=num)
+  tibboots<-lapply(boot$strap,FUN=as_tibble)
+  preddist<-sapply(tibboots,FUN=dist)
+  obs <- dist(subdat)
+  
+  #CI code found from https://www.programmingr.com/statistics/confidence-interval-in-r/
+  center <- mean(preddist, na.rm = TRUE)
+  stddev <- sd(preddist, na.rm = TRUE)
+  error <- qnorm(0.95)*stddev/sqrt(num)
+  
+  paste("The 95% confidence interval places the distance between these points as",
+        round(center-error,3), "to",
+        round(center+error,3), sep=" ")
+}
+
+
 #### Building the App page ####
 
 ui <- fluidPage(
@@ -67,16 +90,25 @@ ui <- fluidPage(
     
     mainPanel(
       tabsetPanel(
-        tabPanel("Plot", plotOutput('plot1', width = "90%")),
+        tabPanel("Plot", 
+                 plotOutput('plot1', width = "90%"),
+                 uiOutput('CI'),
+                 textOutput('confint')),
+        
         tabPanel("Data Table",tableOutput('infotab')),
         tabPanel("General Information",
                  HTML("This project is by Beatrice Weier. <br> 
-                 These plots take data from 
-                 <a 'https://www.nature.com/articles/s41586-020-2785-8'> this paper </a> ;
+                 These plots take data from the Nature paper
+                 <a 'https://www.nature.com/articles/s41586-020-2785-8'> 
+                 The genomic landscapes of individual melanocytes from human skin </a>;
                  an article with data regarding mutations in melanocytes from 
-                 different subject. The R code takes this data and creates a 
+                 different subject. The data is depicted by the patient (P#), the
+                 site of cell (e.g. RBK is right Back), and a number to indicate
+                 individual cell.The data used included specific regarding the 
+                 mutation. <br>
+                 The R code takes this data and creates a 
                  purely objective scaling of mutations with equal distances for 
-                 all mutations. A big disclaimer is that the distance are 
+                 all mutations/genes. A big disclaimer is that the distance are 
                  calculated from the gene name, not the specific mutation within 
                  the gene. I hope to eventually better this app and make 
                  phylogenies accountign for biologicalvariance and probabilites 
@@ -99,7 +131,20 @@ server <- function(input, output) {
                   selected = "rectangular")
     }
   })
+  #Render selector for specific data CI
+  output$CI <- renderUI({
+    selectInput('sub',"Select Two For Bootstrap analysis",
+                dat()$ID, multiple=TRUE)
+  })
   
+  output$confint <- renderText(
+    if (length(input$sub)==2){
+      bootci(dat(),input$sub[1],input$sub[2])
+    }else{
+      warning("Select Only Two")
+    }
+
+    )
   #for plot
   output$plot1 <- renderPlot({
     if (input$phylayout == "unrooted"){

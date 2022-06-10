@@ -5,10 +5,10 @@ account: beabaea
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6420339
-bundleId: 5972445
+bundleId: 5994382
 url: https://beabaea.shinyapps.io/MelanocytePlots/
-when: 1654195310.47701
-lastSyncTime: 1654195310.4815
+when: 1654820319.24972
+lastSyncTime: 1654820319.24972
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: HumanMelDat.xlsx|outline.R|README.md
